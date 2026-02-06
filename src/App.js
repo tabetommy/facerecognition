@@ -17,6 +17,8 @@ const App = () => {
   const [box, setBox] = useState({});
 
   const [open, setOpen] = React.useState(false);
+  const  [user, setUser]=useState({})
+  // const [notLoggedIn,setNotLoggedIn]=useState(false)
 
   const calculateFaceLocation = (data) => {
     const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
@@ -48,35 +50,90 @@ const App = () => {
   //     .then(response => displayFaceBox(calculateFaceLocation(response)))
   //     .catch(err => console.log(err));
   // };
+ useEffect(()=>{
+  const token = localStorage.getItem('token');
+   if (!token) {
+    // Scenario 1: No token found, user must log in
+    setOpen(true);
+  } else {
+    // Scenario 2: Token exists, verify it with the backend
+    fetch('https://facerecognitionapp-api-zzin.onrender.com/verify', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('Token invalid or expired');
+      return res.json();
+    })
+    .then(userData => {
+      // Auto-login successful!
+      // loadUser is a function that updates your main App state
+      setUser(userData); 
+      setOpen(false); 
+    })
+    .catch(err => {
+      console.log(err);
+      // If the token is fake or expired, clean up and open modal
+      localStorage.removeItem('token');
+      setOpen(true);
+    });
+  }
  
-  useEffect(()=>{
-    setOpen(true)
-  },[])
+}, []);
+
    
   const onButtonSubmit = () => {
+    const token=localStorage.getItem('token');
   setImageUrl(input);
     fetch('https://facerecognitionapp-api-zzin.onrender.com/imageurl', {
     method: 'post',
-    headers: {'Content-Type': 'application/json'},
+    headers: {'Content-Type': 'application/json','Authorization': `Bearer ${token}`},
     body: JSON.stringify({ input: input })
   })
   .then(response => response.json())
   .then(result => {
-    displayFaceBox(calculateFaceLocation(result))
+    if(result){
+      displayFaceBox(calculateFaceLocation(result));
+    return fetch('https://facerecognitionapp-api-zzin.onrender.com/image', {
+          method: 'put',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ username: user.username })
+        })
+    }
   })
-  .catch(err => console.log(err));
+  .then(response=>response.json())
+  .then(count=>{
+    setUser({...user,entries:count});
+    setInput('');
+  })
+  .catch(err => console.log('Error processing image:',err));
 };
+
+const dataReset=()=>{
+  setUser({});
+  setInput('');
+  setImageUrl('');
+  setBox({});
+  localStorage.removeItem('token');
+}
 
   return (
     <div>
-      <AuthDialog open={open} setOpen={setOpen} />
+      <AuthDialog open={open} setOpen={setOpen} setUser={setUser} dataReset={dataReset} user={user}/>
       {/* <Particles className='particles' />  */}
       <Logo />
       <ImageLinkForm 
         onInputChange={onInputChange}
         onButtonSubmit={onButtonSubmit}
+        input={input}
+        user={user}
       /> 
-      <FaceReg box={box} imageUrl={imageUrl} />  
+      <FaceReg box={box} imageUrl={imageUrl}/>  
     </div>
   );
 };

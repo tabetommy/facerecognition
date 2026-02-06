@@ -8,7 +8,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 
-export default function AuthDialog({open, setOpen}) {
+export default function AuthDialog({open, setOpen, setUser, dataReset, user}) {
   const [isLogin, setIsLogin] = useState(true); // Schalter für Login/Registrierung
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -18,7 +18,14 @@ export default function AuthDialog({open, setOpen}) {
 
 const handleClickShowPassword = () => setShowPassword(!showPassword);
 
-  const handleClickOpen = () => setOpen(true);
+  const handleClickOpenClose = () => {
+    if(!Object.keys(user).length){
+      setOpen(true);
+     }else{
+      dataReset()
+      
+     }
+  };
   
   const handleClose = () => {
     setOpen(false);
@@ -50,31 +57,58 @@ const handleClickShowPassword = () => setShowPassword(!showPassword);
       if (!response.ok) {
         throw new Error(data.error || data || 'Etwas ist schiefgelaufen');
       }
-
-      console.log('Erfolg:', data);
+      localStorage.setItem('token',data.token);
+      setUser(data.user)
       handleClose();
+      setUsername('');
+       setPassword('');
+
       // Hier Token speichern (z.B. localStorage.setItem('token', data.token))
     } catch (err) {
       setError(err.message);
     }
   };
 
-  const handleDemo = () => {
-    // Demo-Daten, die deine Zod-Regeln erfüllen (Großbuchstabe + Sonderzeichen)
-    setUsername('Demo_Nutzer');
-    setPassword('DemoPasswort123!');
-    // Optional: Direkt den Login-Trigger nach dem Setzen ausführen
+  const handleDemo = async() => {
+   
+    const randomNumber = Math.floor(Math.random() * 900) + 100;
+    const username=`Demo_Nuzter_${randomNumber}`;
+    const password=`Demo!pass${randomNumber}`;
+    // setUsername(name);
+    // setPassword(`Demo!pass${randomNumber}`);
+     const payload = { username, password };
+    try {
+      const response = await fetch(`https://facerecognitionapp-api-zzin.onrender.com/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || data || 'Etwas ist schiefgelaufen');
+      }
+      localStorage.setItem('token',data.token);
+      setUser(data.user)
+      handleClose();
+      setUsername('');
+       setPassword('');
+      // Hier Token speichern (z.B. localStorage.setItem('token', data.token))
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
-  
+
 
   return (
     <React.Fragment>
-      <Button variant="contained" color="primary" onClick={handleClickOpen}>
-        Anmelden / Registrieren
+      <Button variant="contained" color="primary" onClick={handleClickOpenClose}>
+        {!Object.keys(user).length ?'Anmelden / Registrieren':'Abmelden'}
       </Button>
 
-      <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
+      <Dialog open={open} onClose={()=>{}} maxWidth="xs" fullWidth disableEscapeKeyDown>
         <DialogTitle sx={{ textAlign: 'center', fontWeight: 'bold' }}>
           {isLogin ? 'Anmeldung' : 'Konto erstellen'}
         </DialogTitle>
@@ -155,10 +189,6 @@ const handleClickShowPassword = () => setShowPassword(!showPassword);
             onClick={handleDemo}
           >
             Demo-Account nutzen
-          </Button>
-          
-          <Button onClick={handleClose} color="inherit" sx={{ mt: 1 }}>
-            Abbrechen
           </Button>
         </DialogActions>
       </Dialog>
