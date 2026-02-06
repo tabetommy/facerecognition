@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 // import Particles from 'npm i react-particles-js';
 import Logo from './components/Logo/Logo.js';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm.js';
 import FaceReg from './components/FaceReg/FaceReg.js';
+import AuthDialog from './components/Dialog/Dialog.js';
 import './App.css';
 
 // const app = new Clarifai.App({
@@ -14,6 +15,8 @@ const App = () => {
   const [input, setInput] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [box, setBox] = useState({});
+
+  const [open, setOpen] = React.useState(false);
 
   const calculateFaceLocation = (data) => {
     const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
@@ -45,10 +48,14 @@ const App = () => {
   //     .then(response => displayFaceBox(calculateFaceLocation(response)))
   //     .catch(err => console.log(err));
   // };
-
+ 
+  useEffect(()=>{
+    setOpen(true)
+  },[])
+   
   const onButtonSubmit = () => {
   setImageUrl(input);
-    fetch('http://localhost:5000/imageurl', {
+    fetch('https://facerecognitionapp-api-zzin.onrender.com/imageurl', {
     method: 'post',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({ input: input })
@@ -62,6 +69,7 @@ const App = () => {
 
   return (
     <div>
+      <AuthDialog open={open} setOpen={setOpen} />
       {/* <Particles className='particles' />  */}
       <Logo />
       <ImageLinkForm 
