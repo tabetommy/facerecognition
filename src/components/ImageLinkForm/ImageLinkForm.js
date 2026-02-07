@@ -6,13 +6,13 @@ const ImageLinkForm=({onInputChange, onButtonSubmit, user, input})=>{
 	return(
 		<div>
 			<p className='f3 tc'>
-				{'Dieses intelligente Gehirn erkennt Gesichter in Ihrem Bild. Probieren Sie es aus!'}
+				Wie schlau ist diese KI? Geben Sie einen Bild-Link ein und sehen Sie zu, wie sie Gesichter blitzschnell erkennt!
 			</p>
 			{Object.keys(user).length ?<p className='f3 tc'>
-				{Object.keys(user).length &&`${user.username}, your current entry count is : ${user.entries}`}
+				{Object.keys(user).length &&`${user.username}, Ihre aktuelle Eintragungsanzahl beträgt : ${user.entries}`}
 			</p>:null}
 			{Object.keys(user).length ?<p className='f3 tc'>
-				{`Remaining count is : ${20-user.entries}`}
+				{`Verbleibende Einträge sind : ${20-user.entries}`}
 			</p>:null}
 			<div className='center'>
 				<div className='form center pa4 br3 shadow-5'>

@@ -120,11 +120,18 @@ const dataReset=()=>{
   setImageUrl('');
   setBox({});
   localStorage.removeItem('token');
+  setOpen(true)
 }
 
   return (
     <div>
-      <AuthDialog open={open} setOpen={setOpen} setUser={setUser} dataReset={dataReset} user={user}/>
+      <AuthDialog open={open} setOpen={setOpen} setUser={setUser} user={user}/>
+      {Object.keys(user).length > 0 && 
+      <div className="flex justify-end">
+          <button className='w-15 f4 link ph3 pv2 dib white bg-light-red' onClick={dataReset}>
+         Abmelden
+      </button>
+      </div>}
       {/* <Particles className='particles' />  */}
       <Logo />
       <ImageLinkForm 

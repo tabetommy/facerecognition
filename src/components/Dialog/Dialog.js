@@ -104,10 +104,6 @@ const handleClickShowPassword = () => setShowPassword(!showPassword);
 
   return (
     <React.Fragment>
-      <Button variant="contained" color="primary" onClick={handleClickOpenClose}>
-        {!Object.keys(user).length ?'Anmelden / Registrieren':'Abmelden'}
-      </Button>
-
       <Dialog open={open} onClose={()=>{}} maxWidth="xs" fullWidth disableEscapeKeyDown>
         <DialogTitle sx={{ textAlign: 'center', fontWeight: 'bold' }}>
           {isLogin ? 'Anmeldung' : 'Konto erstellen'}
