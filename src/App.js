@@ -57,7 +57,7 @@ const App = () => {
     setOpen(true);
   } else {
     // Scenario 2: Token exists, verify it with the backend
-    fetch('https://facerecognitionapp-api-zzin.onrender.com/verify', {
+    fetch('https://facerecognitionapp-api-production.up.railway.app/verify', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -87,7 +87,7 @@ const App = () => {
   const onButtonSubmit = () => {
     const token=localStorage.getItem('token');
   setImageUrl(input);
-    fetch('https://facerecognitionapp-api-zzin.onrender.com/imageurl', {
+    fetch('https://facerecognitionapp-api-production.up.railway.app/imageurl', {
     method: 'post',
     headers: {'Content-Type': 'application/json','Authorization': `Bearer ${token}`},
     body: JSON.stringify({ input: input })
@@ -96,7 +96,7 @@ const App = () => {
   .then(result => {
     if(result){
       displayFaceBox(calculateFaceLocation(result));
-    return fetch('https://facerecognitionapp-api-zzin.onrender.com/image', {
+    return fetch('https://facerecognitionapp-api-production.up.railway.app/image', {
           method: 'put',
           headers: { 
             'Content-Type': 'application/json',

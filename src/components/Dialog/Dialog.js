@@ -46,7 +46,7 @@ const handleClickShowPassword = () => setShowPassword(!showPassword);
     const payload = { username, password };
 
     try {
-      const response = await fetch(`https://facerecognitionapp-api-zzin.onrender.com${endpoint}`, {
+      const response = await fetch(`https://facerecognitionapp-api-production.up.railway.app${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -78,7 +78,7 @@ const handleClickShowPassword = () => setShowPassword(!showPassword);
     // setPassword(`Demo!pass${randomNumber}`);
      const payload = { username, password };
     try {
-      const response = await fetch(`https://facerecognitionapp-api-zzin.onrender.com/register`, {
+      const response = await fetch(`https://facerecognitionapp-api-production.up.railway.app/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
